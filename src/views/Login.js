@@ -20,8 +20,9 @@ class Login extends React.Component{
 
   handleSubmit(e){
     //Implement the User verification here!!
-    console.log(this.state);
-    e.preventDefault();
+    /*console.log(this.state);
+    e.preventDefault();*/
+    this.props.history.push("/Dashboard/" + 1);
   }
 
   render() {
