@@ -1,0 +1,57 @@
+.dashboard{
+  height: 100vh;
+  background-color: #323232;
+  .top-bar{
+    background-color:#121212;
+    height: 8vh;
+    .dropdown-toggle{
+      padding-top: 2vh;
+      color:white;
+      &:hover{
+        color:white;
+      }
+    }
+    .dropdown-menu{
+      background-color: #000000;
+      a{
+        color:white;
+        &:hover{
+          background-color: #000000;
+          color:white;
+        }
+      }
+    }
+  }
+  .add-button{
+    margin-top: 10px;
+    margin-left: 10px;
+    display: flex;
+  }
+  .board-deck{
+    margin-top: 15px;
+    overflow-x: scroll;
+    white-space: nowrap;
+    display: flex;
+    padding-bottom: 15px;
+    &::after {
+      content: '';
+      padding: 10px;
+    }
+    .board{
+      flex: 0 0 auto;
+      margin-left: 20px;
+      background-color: white;
+      width: 25rem;
+      height: 15rem;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .btn{
+        margin-left: 2px;
+        margin-right: 2px;
+      }
+
+    }
+  }
+}

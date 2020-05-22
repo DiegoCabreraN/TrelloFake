@@ -1,0 +1,107 @@
+.board{
+  height: 100vh;
+  width: 100vw;
+  background-color: #323232;
+  .col-not-found{
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    width: 100%;
+  }
+  .top-bar{
+    background-color:#121212;
+    height: 8vh;
+    .dropdown-toggle{
+      padding-top: 2vh;
+      color:white;
+      &:hover{
+        color:white;
+      }
+    }
+    .dropdown-menu{
+      background-color: #000000;
+      a{
+        color:white;
+        &:hover{
+          background-color: #000000;
+          color:white;
+        }
+      }
+    }
+  }
+  .add-button{
+    float: right;
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+  .return-button{
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 10px;
+    left: 0;
+    .btn{
+      background-color: #323232;
+      border: #323232;
+    }
+  }
+  .column-deck{
+    margin-top: 65px;
+    overflow-x: scroll;
+    white-space: nowrap;
+    display: flex;
+    padding-bottom: 15px;
+    &::after {
+      content: '';
+      padding: 10px;
+    }
+    .column{
+      padding-top: 12px;
+      flex: 0 0 auto;
+      margin-left: 20px;
+      background-color: white;
+      width: 20.5rem;
+      height: 77vh;
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      .new-task-btn{
+        margin: 15px 2px 2px 2px;
+      }
+      .task-not-found{
+        color: lighten(black,50%);
+        border-bottom: 1px solid black;
+        width: 20.5rem;
+        text-align: center;
+        justify-content: center;
+        padding: 2vh 2vh 4vh 2vh;
+      }
+      .Task{
+        border-bottom: 1px solid black;
+        text-align: left;
+        display: flex;
+        width: 20.5rem;
+        padding: 2vh 2vh 2vh 2vh;
+        .buttonContainer{
+          display: flex;
+          width: 100%;
+          float: right;
+          justify-content: end;
+          .btn{
+            margin-left: 2px;
+            margin-right: 2px;
+          }
+        }
+      }
+    }
+  }
+}
+.error-screen{
+  background-color: black;
+  height: 100vh;
+  width: 100vw;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
