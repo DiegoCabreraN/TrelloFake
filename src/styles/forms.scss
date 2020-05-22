@@ -1,0 +1,23 @@
+body{
+  background-color: black;
+}
+
+.forceCentered{
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  form{
+    padding-bottom: 10px;
+    .textBox{
+      border-radius: 5000px;
+    }
+    .birthBox{
+      width: 100%;
+      border-radius: 5000px;
+    }
+    .btn{
+      margin-top: 8px;
+    }
+  }
+}

@@ -25,7 +25,7 @@ function App() {
           <Route path="/Dashboard">
             <BoardAdmin />
           </Route>
-          
+
         </Switch>
       </div>
     </Router>
