@@ -9,7 +9,6 @@ import '../styles/board.scss';
 
 const handleSelect = (eventKey) => alert(`selected ${eventKey}`);
 
-
 class Board extends React.Component {
   constructor(props){
     super(props);
