@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import Task from './Task';
 import { Button } from 'react-bootstrap';
 
@@ -17,11 +18,15 @@ function searchTasks(props){
 }
 
 class Column extends React.Component{
+
   render(){
     return(
-    <div className="column">
-      <div>
-        <p>{this.props.name}</p>
+    <div className="column-container">
+      <div className="column">
+        <div className="title">
+          <p>{this.props.name}</p>
+          <Button variant="danger" onClick={()=>this.props.delColumn(this.props.id, this.props.session, this.props.board)}>🗑</Button>
+        </div>
         {
           searchTasks(this.props)
         }

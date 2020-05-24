@@ -7,7 +7,8 @@ const PORT = 5000;
 
 const url = 'mongodb+srv://client:clusterPass@cluster0-1neae.mongodb.net';
 boardConnection = mongoose.connect(url.concat('/boards?retryWrites=true&w=majority'), {useNewUrlParser: true, useUnifiedTopology: true});
-userConnection = mongoose.createConnection(url.concat('/users?retryWrites=true&w=majority'));
+userConnection = mongoose.createConnection(url.concat('/users?retryWrites=true&w=majority'), {useNewUrlParser: true, useUnifiedTopology: true});
+columnConnection = mongoose.createConnection(url.concat('/kanbancolumns?retryWrites=true&w=majority'), {useNewUrlParser: true, useUnifiedTopology: true});
 
 const User = userConnection.model('User',{
   username: String,
@@ -19,6 +20,12 @@ const User = userConnection.model('User',{
 
 const Board = mongoose.model('Board',{
   name: String,
+  sessions: Array,
+});
+
+const Column = mongoose.model('Column',{
+  name: String,
+  boardId: String,
   sessions: Array,
 });
 
@@ -74,5 +81,34 @@ app.post('/deleteBoard/', async (req,res)=>{
       return next(err);
     }
     res.send("complete!");
+  });
+});
+
+app.post('/getColumns/', async (req,res)=>{
+  const query = await Column.find({ "sessions": [req.body.session], "boardId": req.body.boardId});
+  console.log(query);
+  res.status(200).send(query);
+});
+
+app.post('/createColumn/', async (req,res)=>{
+  const columnDocument = {
+    name: req.body.name,
+    boardId: req.body.boardId,
+    sessions: [req.body.session],
+  }
+  const newColumn = new Column(columnDocument);
+  const savedData = await newColumn.save();
+  res.status(200).send(savedData._id);
+});
+
+app.post('/deleteColumn/', async (req,res)=>{
+  Column.deleteOne({_id: req.body.id},(err) => {
+    if (err) {
+      return next(err);
+    }
+  }).then(async ()=>{
+    const query = await Column.find({ "sessions": [req.body.session], "boardId": req.body.boardId});
+    console.log(query);
+    res.status(200).send(query);
   });
 });

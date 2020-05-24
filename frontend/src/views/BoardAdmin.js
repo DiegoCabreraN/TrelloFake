@@ -55,7 +55,6 @@ class BoardAdmin extends React.Component {
   };
   setSelectedBoard(e){
     const board = this.state.boards.find(board => board.id === parseInt(e.target.value));
-    console.log(board)
     this.props.history.push({
       pathname: `/Boards/${this.props.session}/${e.target.value}`,
       state: {

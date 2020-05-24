@@ -1,38 +1,38 @@
 import React from 'react';
+import axios from 'axios';
 import {
   Nav,
   NavDropdown,
   Button,
+  Modal,
 } from 'react-bootstrap';
 import { Column } from '../components'
 import '../styles/board.scss';
 
 const handleSelect = (eventKey) => alert(`selected ${eventKey}`);
 
+async function addColumn(name, boardId, session){
+  const config = {
+    method: 'POST',
+    url: 'http://localhost:5000/createColumn/',
+    data: {
+      name: name,
+      boardId: boardId,
+      session: session,
+    },
+  };
+  const creationState = await axios(config);
+  console.log(creationState.data);
+  return creationState.data;
+}
+
+
 class Board extends React.Component {
   constructor(props){
     super(props);
 
     if(this.props.history.location.state){
-      this.columns = [{
-        name: 'Pending',
-        tasks: [],
-        id: 0,
-        boardId: 0,
-        sessions: [1],
-      },{
-        name: 'Working On',
-        tasks: [],
-        id: 1,
-        boardId: 0,
-        sessions: [1],
-      },{
-        name: 'Done',
-        tasks: [],
-        id: 2,
-        boardId: 0,
-        sessions: [1],
-      }]
+      /*
       this.tasks = [{
         description: "Start",
         columnId: 0,
@@ -45,15 +45,82 @@ class Board extends React.Component {
         taskId: 1,
         boardId: 0,
         sessions: [1],
-      }]
-      this.state = this.props.history.location.state;
+      }]*/
+      this.state = {
+        show: false,
+        columns: [],
+      };
+      this.columns = [];
+      this.tasks = [];
+      this.BoardId = this.props.match.params.BoardId;
+      this.Session = this.props.match.params.session;
+      this.showModal = this.showModal.bind(this);
+      this.hideModal = this.hideModal.bind(this);
+      this.handleChange = this.handleChange.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
     }
+  };
+  handleSubmit(e){
+    e.preventDefault();
+    addColumn(this.state.columnName, this.BoardId, this.Session);
+    const config = {
+      method: 'POST',
+      url: 'http://localhost:5000/getColumns/',
+      data: {
+        session: this.Session,
+        boardId: this.BoardId,
+      },
+    };
+    axios(config).then(res =>{
+      const newState = {
+        columns: res.data,
+        show: false,
+      }
+      this.setState(newState);
+    });
+  };
+  showModal(){
+    this.setState({show:true});
+  };
+  hideModal(e){
+    this.setState({show:false});
+  };
+  handleChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
   }
+  componentDidMount(){
+    const config = {
+      method: 'POST',
+      url: 'http://localhost:5000/getColumns/',
+      data: {
+        session: this.Session,
+        boardId: this.BoardId,
+      },
+    };
+    axios(config).then(res =>{
+      this.setState({columns: res.data});
+    });
+
+  };
   returnToAdmin(){
     this.props.history.push(`/Dashboard/${this.props.match.params.session}`);
   };
+  async delColumn(id, session, boardId){
+    const config = {
+      method: 'POST',
+      url: 'http://localhost:5000/deleteColumn/',
+      data: {
+        session: session,
+        boardId: boardId,
+        id: id,
+      },
+    };
+    const deleteState = await axios(config);
+    this.setState({columns:deleteState.data});
+    return deleteState.data;
+  }
   searchColumns(columns, tasks){
-    if(columns.length === 0){
+    if(!columns || columns.length === 0){
       return (
         <p className="col-not-found">
           There are no Columns
@@ -61,12 +128,21 @@ class Board extends React.Component {
       );
     }
     const arr = columns.map((column) =>
-      <Column key={column.id} name = {column.name} id = {column.id} tasks = {tasks.filter((task) => task.columnId === column.id)}/>
+      <Column
+        key={column._id}
+        name = {column.name}
+        id = {column._id}
+        session = {this.Session}
+        board = {this.BoardId}
+        delColumn = {this.delColumn.bind(this)}
+        tasks = {tasks.filter((task) => task.columnId === column.id)}/>
     )
     return arr;
   };
+
+
   validate(){
-    if(this.state){
+    if(this.props.history.location.state){
       return (
         <div className="board">
           <Nav className="justify-content-end top-bar" onSelect={handleSelect}>
@@ -77,10 +153,31 @@ class Board extends React.Component {
               <NavDropdown.Item eventKey="LogOut" href="/Login">Log Out</NavDropdown.Item>
             </NavDropdown>
           </Nav>
-          <Button variant="secondary" className="add-button">+</Button>
+          <Button variant="secondary" className="add-button" onClick={this.showModal}>+</Button>
+          <Modal show={this.state.show} onHide={this.hideModal}>
+            <Modal.Header closeButton>
+              <Modal.Title>Create Column</Modal.Title>
+            </Modal.Header>
+            <form onSubmit={this.handleSubmit}>
+              <Modal.Body>
+                <label>
+                  Column Name:
+                  <input type="text"
+                    name="columnName"
+                    value={this.newColumnName}
+                    onChange={this.handleChange}
+                    className="textBox"
+                  />
+                </label>
+              </Modal.Body>
+              <Modal.Footer>
+                <input type="submit" value="Submit" className="btn btn-primary"/>
+              </Modal.Footer>
+            </form>
+          </Modal>
           <div className="column-deck">
             {
-              this.searchColumns(this.columns, this.tasks)
+              this.searchColumns(this.state.columns, this.tasks)
             }
           </div>
         </div>
