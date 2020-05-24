@@ -47,8 +47,6 @@ class Board extends React.Component {
         sessions: [1],
       }]
       this.state = this.props.history.location.state;
-      this.columns = this.columns.filter((column) => column.boardId === parseInt(this.state.board.id));
-      this.tasks = this.tasks.filter((task) => task.boardId === parseInt(this.state.board.id));
     }
   }
   returnToAdmin(){
@@ -68,7 +66,7 @@ class Board extends React.Component {
     return arr;
   };
   validate(){
-    if(this.state && this.state.board.sessions.includes(parseInt(this.props.match.params.session))){
+    if(this.state){
       return (
         <div className="board">
           <Nav className="justify-content-end top-bar" onSelect={handleSelect}>

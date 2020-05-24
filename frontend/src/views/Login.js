@@ -1,7 +1,19 @@
 import React from 'react';
-import { Button, Card } from 'react-bootstrap';
+import { Button, Card, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/forms.scss'
+import '../styles/forms.scss';
+import axios from 'axios';
+
+async function getData(params){
+  const config = {
+    method: 'POST',
+    url: 'http://localhost:5000/getUser/',
+    data: params,
+  };
+  const creationState = await axios(config);
+  return creationState.data;
+}
+
 
 class Login extends React.Component{
   constructor(props) {
@@ -13,16 +25,14 @@ class Login extends React.Component{
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
   handleChange(e) {
     this.setState({ [e.target.name]: e.target.value });
   }
-
   handleSubmit(e){
-    //Implement the User verification here!!
-    /*console.log(this.state);
-    e.preventDefault();*/
-    this.props.history.push("/Dashboard/" + 1);
+    e.preventDefault();
+    getData(this.state).then((session)=>{
+      this.props.history.push("/Dashboard/" + session);
+    });
   }
 
   render() {
