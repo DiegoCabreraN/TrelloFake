@@ -4,109 +4,136 @@ import {
   Modal,
   Dropdown,
   ButtonGroup,
-  DropdownButton
+  DropdownButton,
 } from 'react-bootstrap';
 import axios from 'axios';
 import host from '../config';
 
-class Task extends React.Component{
-  constructor(props){
-    super(props);
+/* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 
+class Task extends React.Component {
+  constructor(props) {
+    super(props);
+    const { tasks, availableColumns } = this.props;
     this.state = {
       show: false,
-      tasks: [],
-      taskDescription: this.props.tasks.description,
-      actualColumnId: this.props.tasks.columnId,
-      actualColumn: this.props.availableColumns.find((item)=>item._id===this.props.tasks.columnId).name
+      taskDescription: tasks.description,
+      actualColumnId: tasks.columnId,
+      actualColumn: availableColumns.find((item) => item._id === tasks.columnId).name,
     };
     this.tasks = [];
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-  };
-  handleSubmit(e){
+  }
+
+  handleSubmit(e) {
     e.preventDefault();
+    const { tasks, updateTask } = this.props;
+    const { actualColumnId, taskDescription } = this.state;
     const config = {
       method: 'POST',
       url: `${host}/updateTask/`,
       data: {
-        id: this.props.tasks._id,
-        columnId: this.state.actualColumnId,
-        newDescription: this.state.taskDescription,
+        id: tasks._id,
+        columnId: actualColumnId,
+        newDescription: taskDescription,
       },
     };
-    axios(config).then(res =>{
+    axios(config).then((res) => {
       const newState = {
         columns: res.data,
         show: false,
-      }
+      };
       this.setState(newState);
-      this.props.updateTask(e);
-      this.setState({show:false});
+      updateTask(e);
+      this.setState({ show: false });
     });
   }
-  showModal(){
-    this.setState({show:true});
-  };
-  hideModal(e){
-    this.setState({show:false});
-  };
-  handleChange(e) {
 
+  showModal() {
+    this.setState({ show: true });
+  }
+
+  hideModal() {
+    this.setState({ show: false });
+  }
+
+  handleChange(e) {
     this.setState({ taskDescription: e.target.value });
-  };
-  render(){
-    return(
-      <div key={this.props.tasks._id} className="task">
-        <Button variant="dark" className="task-description" onClick={this.showModal}>{this.props.tasks.description}</Button>
-        <Modal centered show={this.state.show} onHide={this.hideModal}>
+  }
+
+  render() {
+    const {
+      tasks,
+      availableColumns,
+      columnId,
+      board,
+      delTask,
+    } = this.props;
+    const { show, taskDescription, actualColumn } = this.state;
+    return (
+      <div key={tasks._id} className="task">
+        <Button variant="dark" className="task-description" onClick={this.showModal}>{tasks.description}</Button>
+        <Modal centered show={show} onHide={this.hideModal}>
           <Modal.Header closeButton>
             <Modal.Title>Edit Task</Modal.Title>
           </Modal.Header>
           <form onSubmit={this.handleSubmit}>
             <Modal.Body>
-              <label>
+              <label htmlFor="description">
                 <div className="input-label">Description:</div>
-                <input type="text"
+                <input
+                  id="description"
+                  type="text"
                   name="taskDescription"
-                  value={this.state.taskDescription}
+                  value={taskDescription}
                   onChange={this.handleChange}
                   className="textBox"
                 />
               </label>
-              <label>
+              <label htmlFor="column">
                 <div className="input-label">Column:</div>
                 <DropdownButton
+                  id="column"
                   as={ButtonGroup}
                   variant="secondary"
-                  title={this.state.actualColumn}
+                  title={actualColumn}
                   className="column-dropdown"
                 >
                   {
-                    this.props.availableColumns.map((elem)=>
+                    availableColumns.map((elem) => (
                       <Dropdown.Item
                         key={elem._id}
-                        onClick={()=>this.setState({actualColumnId:elem._id ,actualColumn:elem.name})}
+                        onClick={() => this.setState({
+                          actualColumnId: elem._id,
+                          actualColumn: elem.name,
+                        })}
                       >
-                      {elem.name}
+                        {elem.name}
                       </Dropdown.Item>
-                    )
+                    ))
                   }
                 </DropdownButton>
               </label>
             </Modal.Body>
             <Modal.Footer>
-              <input type="submit" value="Submit" className="btn btn-light"/>
+              <input
+                type="submit"
+                value="Submit"
+                className="btn btn-light"
+              />
             </Modal.Footer>
           </form>
         </Modal>
         <div className="buttonContainer">
-          <Button variant="danger" className="close-btn" onClick={() => this.props.delTask(this.props.tasks._id,
-                                                                    this.props.columnId,
-                                                                     this.props.board)}>
-          ⨯
+          <Button
+            variant="danger"
+            className="close-btn"
+            onClick={() => delTask(tasks._id, columnId, board)}
+          >
+            ⨯
           </Button>
         </div>
       </div>

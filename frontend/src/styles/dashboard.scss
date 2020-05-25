@@ -14,21 +14,21 @@ $textColor: white;
     height: 8vh;
     display: flex;
     align-items: center;
-    .nav-item{
-      margin: 0 0 0 2vh;
-    }
     .dropdown-toggle{
+      width: 6rem;
       padding: 0 0 0 0;
+      padding-right: 3rem;
       color:$textColor;
       &:hover{
         color:$textColor;
       }
     }
-    .dropdown{
-      padding-right: 2rem;
-    }
     .dropdown-menu{
-      background-color: $backgroundColor;
+      position: absolute;
+      transform: translate(-65px, 5.5vh) !important;
+      right: 0;
+      top: 0;
+      background-color: darken($backgroundColor, 5%);
       a{
         color:$textColor;
         &:hover{
