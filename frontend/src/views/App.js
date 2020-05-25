@@ -6,7 +6,6 @@ import {
   Login,
   SignUp,
 } from './index';
-
 import {
   BrowserRouter as Router,
   Switch,
@@ -14,25 +13,8 @@ import {
 } from "react-router-dom";
 
 function Dashboard(props) {
-  const boards = [{
-    name: "Board1",
-    id: 0,
-    sessions: [1],
-  },{
-    name: "Board2",
-    id: 1,
-    sessions: [1],
-  },{
-    name: "Board3",
-    id: 2,
-    sessions: [1],
-  },{
-    name: "Board4",
-    id: 3,
-    sessions: [2],
-  }];
   return (
-    <BoardAdmin boards = { boards } history = { props.history } session = {props.match.params.Session}/>
+    <BoardAdmin history = { props.history } session = {props.match.params.Session}/>
   );
 }
 class App extends React.Component{
