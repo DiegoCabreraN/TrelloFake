@@ -1,13 +1,3 @@
-import App from './App';
-import BoardAdmin from './BoardAdmin';
-import Login from './Login';
-import SignUp from './SignUp';
-import Board from './Board';
+import Session from './App';
 
-export {
-  App,
-  BoardAdmin,
-  Login,
-  SignUp,
-  Board,
-};
+export default Session;

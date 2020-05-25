@@ -1,14 +1,14 @@
 import React from 'react';
 import { Button, Card } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/forms.scss'
 import axios from 'axios';
 import host from '../config';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/forms.scss';
 
-async function sendData(params){
+async function sendData(params) {
   const config = {
     method: 'POST',
-    url:`${host}/createUser/`,
+    url: `${host}/create/user/`,
     data: params,
   };
   const creationState = await axios(config);
@@ -19,7 +19,7 @@ class SignUp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
+      mail: '',
       password: '',
       fName: '',
       lName: '',
@@ -33,71 +33,94 @@ class SignUp extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  handleSubmit(e){
+  handleSubmit(e) {
     e.preventDefault();
-    sendData(this.state).then((session)=>{
-      this.props.history.push("/Dashboard/" + session);
+    const { history } = this.props;
+    sendData(this.state).then((session) => {
+      history.push(`/Dashboard/${session}`);
     });
   }
 
-  render(){
+  render() {
+    const {
+      mail,
+      password,
+      fName,
+      lName,
+      birthday,
+    } = this.state;
     return (
-        <div className="forceCentered">
-          <Card bg="dark" text="white" style={{ width: '18rem'}}>
-            <Card.Body>
-              <Card.Title>SignUp</Card.Title>
-              <form onSubmit={this.handleSubmit}>
-                <label>
-                  Username:
-                  <input type="text"
-                    name="username"
-                    value={this.state.username}
-                    onChange={this.handleChange}
-                    className="textBox"
-                  />
-                </label>
-                <label>
-                  Password:
-                  <input type="password"
-                    name="password"
-                    value={this.state.password}
-                    onChange={this.handleChange}
-                    className="textBox"
-                  />
-                </label>
-                <label>
-                  First Name:
-                  <input type="text"
-                    name="fName"
-                    value={this.state.fName}
-                    onChange={this.handleChange}
-                    className="textBox"
-                  />
-                </label>
-                <label>
-                  Last Name:
-                  <input type="text"
-                    name="lName"
-                    value={this.state.lName}
-                    onChange={this.handleChange}
-                    className="textBox"
-                  />
-                </label>
-                <label>
-                  Bithday:
-                  <input type="date"
-                    name="birthday"
-                    value={this.state.birthday}
-                    onChange={this.handleChange}
-                    className="birthBox"
-                  />
-                </label>
-                <input type="submit" value="Submit" className="btn btn-light"/>
-              </form>
-              <Button variant="dark" href="/Login">Login</Button>
-            </Card.Body>
-          </Card>
-        </div>);
+      <div className="forceCentered">
+        <Card bg="dark" text="white" style={{ width: '18rem' }}>
+          <Card.Body>
+            <Card.Title>SignUp</Card.Title>
+            <form onSubmit={this.handleSubmit}>
+              <label htmlFor="mail">
+                Mail:
+                <input
+                  id="mail"
+                  type="text"
+                  name="mail"
+                  value={mail}
+                  onChange={this.handleChange}
+                  className="textBox"
+                />
+              </label>
+              <label htmlFor="password">
+                Password:
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  value={password}
+                  onChange={this.handleChange}
+                  className="textBox"
+                />
+              </label>
+              <label htmlFor="fName">
+                First Name:
+                <input
+                  id="fName"
+                  type="text"
+                  name="fName"
+                  value={fName}
+                  onChange={this.handleChange}
+                  className="textBox"
+                />
+              </label>
+              <label htmlFor="lName">
+                Last Name:
+                <input
+                  id="lName"
+                  type="text"
+                  name="lName"
+                  value={lName}
+                  onChange={this.handleChange}
+                  className="textBox"
+                />
+              </label>
+              <label htmlFor="date">
+                Bithday:
+                <input
+                  id="date"
+                  type="date"
+                  name="birthday"
+                  value={birthday}
+                  onChange={this.handleChange}
+                  className="birthBox"
+                />
+              </label>
+              <input
+                type="submit"
+                value="Submit"
+                className="btn btn-light"
+              />
+            </form>
+            <Button variant="dark" href="/Login">Login</Button>
+          </Card.Body>
+        </Card>
+      </div>
+    );
   }
 }
 

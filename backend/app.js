@@ -1,159 +1,186 @@
+require('dotenv').config();
+
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const mongoose = require('mongoose');
-const PORT = 5000;
 
-const url = 'mongodb+srv://client:clusterPass@cluster0-1neae.mongodb.net';
-boardConnection = mongoose.connect(url.concat('/boards?retryWrites=true&w=majority'), {useNewUrlParser: true, useUnifiedTopology: true});
-userConnection = mongoose.createConnection(url.concat('/users?retryWrites=true&w=majority'), {useNewUrlParser: true, useUnifiedTopology: true});
+const {
+  serverPort,
+  connections,
+} = require('./src/config');
 
-const User = userConnection.model('User',{
-  username: String,
-  password: String,
-  fName: String,
-  lName: String,
-  birthday: String,
-});
-
-const Board = mongoose.model('Board',{
-  name: String,
-  sessions: Array,
-});
-
-const Column = mongoose.model('Column',{
-  name: String,
-  boardId: String,
-  sessions: Array,
-});
-
-const Task = mongoose.model('Task',{
-  description: String,
-  columnId: String,
-  boardId: String,
-});
+const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 
-app.listen(PORT, function() {
-    console.log("Server is running on Port: " + PORT);
+app.listen(parseInt(serverPort, 10), () => {
+  console.log(`Server is running on Port: ${parseInt(serverPort, 10)}`);
 });
 
-app.post('/createUser/', async (req,res)=>{
-  const query = await User.find({ "username": req.body.username});
-  if(query.length === 0){
-    const newUser = new User(req.body);
-    const savedData = await newUser.save();
+/* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
+
+app.post('/create/:type', async (req, res) => {
+  if (req.params.type === 'user') {
+    const query = await connections.User.find(
+      {
+        mail: req.body.mail,
+      },
+    );
+    if (query.length === 0) {
+      const newUser = new connections.User(req.body);
+      const savedData = await newUser.save();
+      res.status(200).send(savedData._id);
+    } else {
+      res.status(500).end();
+    }
+  } else if (req.params.type === 'board') {
+    const boardDocument = {
+      name: req.body.name,
+      sessions: [req.body.session],
+    };
+    const newBoard = new connections.Board(boardDocument);
+    const savedData = await newBoard.save();
+    res.status(200).send(savedData._id);
+  } else if (req.params.type === 'column') {
+    const columnDocument = {
+      name: req.body.name,
+      boardId: req.body.boardId,
+      sessions: [req.body.session],
+    };
+    const newColumn = new connections.Column(columnDocument);
+    const savedData = await newColumn.save();
+    res.status(200).send(savedData._id);
+  } else if (req.params.type === 'task') {
+    const query = await connections.Column.findOne(
+      {
+        name: req.body.colName,
+        sessions: [req.body.session],
+        boardId: req.body.boardId,
+      },
+    );
+    const taskDocument = {
+      description: req.body.description,
+      columnId: query._id,
+      boardId: req.body.boardId,
+    };
+    const newTask = new connections.Task(taskDocument);
+    const savedData = await newTask.save();
     res.status(200).send(savedData._id);
   }
-  else{
-    res.status(500).end();;
-  }
+  res.end();
 });
 
-app.post('/getUser/', async (req,res)=>{
-  const query = await User.find({ "username": req.body.username});
-  if(query.length !== 0 && query[0].username === req.body.username && query[0].password === req.body.password){
-    res.status(200).send(query[0]._id);
-  }
-  else{
-    res.status(500).end();
+app.post('/get/:type', async (req, res) => {
+  if (req.params.type === 'user') {
+    const query = await connections.User.find(
+      {
+        username: req.body.username,
+      },
+    );
+    if (query.length !== 0
+        && query[0].username === req.body.username
+        && query[0].password === req.body.password
+    ) {
+      res.status(200).send(query[0]._id);
+    } else {
+      res.status(500).end();
+    }
+    res.end();
+  } else if (req.params.type === 'board') {
+    const query = await connections.Board.find(
+      {
+        sessions: [req.body.session],
+      },
+    );
+    res.status(200).send(query);
+  } else if (req.params.type === 'column') {
+    const query = await connections.Column.find(
+      {
+        sessions: [req.body.session],
+        boardId: req.body.boardId,
+      },
+    );
+    res.status(200).send(query);
+  } else if (req.params.type === 'task') {
+    const query = await connections.Task.find(
+      {
+        columnId: req.body.columnId,
+        boardId: req.body.boardId,
+      },
+    );
+    res.status(200).send(query);
   }
   res.end();
-})
+});
 
-app.post('/createBoard/', async (req,res)=>{
-  const boardDocument = {
-    name: req.body.name,
-    sessions: [req.body.session],
+app.post('/delete/:type', async (req, res) => {
+  if (req.params.type === 'board') {
+    connections.Task.deleteMany(
+      {
+        boardId: req.body.id,
+      },
+    ).then(() => {
+      connections.Column.deleteMany(
+        {
+          boardId: req.body.id,
+        },
+      ).then(() => {
+        connections.Board.deleteOne(
+          {
+            _id: req.body.id,
+          },
+        ).then(() => {
+          res.send('complete!');
+        });
+      });
+    });
+  } else if (req.params.type === 'column') {
+    await connections.Task.deleteMany(
+      {
+        columnId: req.body.id,
+      },
+    );
+    connections.Column.deleteOne(
+      {
+        _id: req.body.id,
+      },
+    ).then(async () => {
+      const query = await connections.Column.find(
+        {
+          sessions: [req.body.session],
+          boardId: req.body.boardId,
+        },
+      );
+      res.status(200).send(query);
+    });
+  } else if (req.params.type === 'task') {
+    connections.Task.deleteOne(
+      {
+        _id: req.body.id,
+      },
+    ).then(async () => {
+      const query = await connections.Task.find(
+        {
+          columnId: req.body.columnId,
+          boardId: req.body.boardId,
+        },
+      );
+      res.status(200).send(query);
+    });
   }
-  const newBoard = new Board(boardDocument);
-  const savedData = await newBoard.save();
-  res.status(200).send(savedData._id);
 });
 
-app.post('/getBoard/', async (req,res)=>{
-  const query = await Board.find({ "sessions": [req.body.session]});
-  res.status(200).send(query);
-});
-
-app.post('/deleteBoard/', async (req,res)=>{
-  await Task.deleteMany({boardId: req.body.id});
-  await Column.deleteMany({boardId: req.body.id});
-  Board.deleteOne({_id: req.body.id},(err) => {
-    if (err) {
-      return next(err);
-    }
-    res.send("complete!");
-  });
-});
-
-app.post('/getColumns/', async (req,res)=>{
-  const query = await Column.find({ "sessions": [req.body.session], "boardId": req.body.boardId});
-  res.status(200).send(query);
-});
-
-app.post('/createColumn/', async (req,res)=>{
-  const columnDocument = {
-    name: req.body.name,
-    boardId: req.body.boardId,
-    sessions: [req.body.session],
-  }
-  const newColumn = new Column(columnDocument);
-  const savedData = await newColumn.save();
-  res.status(200).send(savedData._id);
-});
-
-app.post('/deleteColumn/', async (req,res)=>{
-  await Task.deleteMany({columnId: req.body.id});
-  Column.deleteOne({_id: req.body.id},(err) => {
-    if (err) {
-      return next(err);
-    }
-  }).then(async ()=>{
-    const query = await Column.find({ "sessions": [req.body.session], "boardId": req.body.boardId});
-    res.status(200).send(query);
-  });
-});
-
-app.post('/getTasks/', async (req,res)=>{
-  const query = await Task.find({ "columnId": req.body.columnId, "boardId": req.body.boardId});
-  res.status(200).send(query);
-});
-
-app.post('/createTask/', async (req,res)=>{
-  const query = await Column.findOne({"name":req.body.colName,"sessions":[req.body.session], "boardId": req.body.boardId});
-  const columnId = query._id;
-  const taskDocument = {
-    description: req.body.description,
-    columnId: columnId,
-    boardId: req.body.boardId,
-  }
-  const newTask = new Task(taskDocument);
-  const savedData = await newTask.save();
-  res.status(200).send(savedData._id);
-});
-
-app.post('/deleteTask/', async (req,res)=>{
-  Task.deleteOne({_id: req.body.id},(err) => {
-    if (err) {
-      return next(err);
-    }
-  }).then(async ()=>{
-    const query = await Task.find({ "columnId": req.body.columnId, "boardId": req.body.boardId});
-    res.status(200).send(query);
-  });
-});
-
-app.post('/updateTask/', async (req,res)=>{
-
-  const currentTask = await Task.findOne({ "_id": req.body.id});
+app.post('/updateTask/', async (req, res) => {
+  const currentTask = await connections.Task.findOne(
+    {
+      _id: req.body.id,
+    },
+  );
   currentTask.description = req.body.newDescription;
   currentTask.columnId = req.body.columnId;
-  const currentTaskDoc = Task(currentTask);
-  currentTaskDoc.save().then((data)=>{
+  const currentTaskDoc = connections.Task(currentTask);
+  currentTaskDoc.save().then((data) => {
     res.status(200).send(data._id);
   });
 });

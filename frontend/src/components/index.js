@@ -3,5 +3,5 @@ import Task from './Task';
 
 export {
   Column,
-  Task
+  Task,
 };

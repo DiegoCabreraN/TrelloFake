@@ -17,7 +17,6 @@ $textColor: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 90vh;
   }
   .top-bar{
     background-color:$mainColor;
@@ -74,7 +73,6 @@ $textColor: white;
     }
     .column-container{
       margin-top: 6vh;
-      padding-top: 12px;
       flex: 0 0 auto;
       margin-left: 20px;
       background-color: $objectColor;
@@ -84,10 +82,11 @@ $textColor: white;
       display: flex;
       justify-content: center;
       .column{
+        padding-top: 15px;
         height: 77vh;
         overflow: auto;
         .title{
-          height: 10%;
+          height: 8vh;
           display: flex;
           align-items: center;
           p{
@@ -111,7 +110,7 @@ $textColor: white;
           border-bottom: 1px solid $borderColor;
         }
         .tasks{
-          height: 75%;
+          height: 57vh;
           width: 20.5rem;
           overflow: auto;
           .task{
@@ -150,7 +149,7 @@ $textColor: white;
         }
         .footer{
           border-top: 1px solid $borderColor;
-          height: 15%;
+          height: 10vh;
           .new-task-btn{
             margin: 15px 2px 2px 2px;
             border-radius: 100%;
