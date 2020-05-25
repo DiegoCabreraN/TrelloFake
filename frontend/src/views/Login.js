@@ -3,11 +3,12 @@ import { Button, Card, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/forms.scss';
 import axios from 'axios';
+import host from '../config';
 
 async function getData(params){
   const config = {
     method: 'POST',
-    url: 'http://localhost:5000/getUser/',
+    url: `${host}/getUser/`,
     data: params,
   };
   const creationState = await axios(config);
@@ -60,9 +61,9 @@ class Login extends React.Component{
                 className="textBox"
               />
             </label>
-            <input type="submit" value="Submit" className="btn btn-primary"/>
+            <input type="submit" value="Submit" className="btn btn-light"/>
           </form>
-          <Button variant="secondary" href="/SignUp">SignUp</Button>
+          <Button variant="dark" href="/SignUp">SignUp</Button>
         </Card.Body>
       </Card>
     </div>);

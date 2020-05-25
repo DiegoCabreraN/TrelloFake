@@ -3,11 +3,12 @@ import { Button, Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/forms.scss'
 import axios from 'axios';
+import host from '../config';
 
 async function sendData(params){
   const config = {
     method: 'POST',
-    url: 'http://localhost:5000/createUser/',
+    url:`${host}/createUser/`,
     data: params,
   };
   const creationState = await axios(config);
@@ -91,9 +92,9 @@ class SignUp extends React.Component {
                     className="birthBox"
                   />
                 </label>
-                <input type="submit" value="Submit" className="btn btn-primary"/>
+                <input type="submit" value="Submit" className="btn btn-light"/>
               </form>
-              <Button variant="secondary" href="/Login">Login</Button>
+              <Button variant="dark" href="/Login">Login</Button>
             </Card.Body>
           </Card>
         </div>);

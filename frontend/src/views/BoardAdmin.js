@@ -9,7 +9,7 @@ import {
 } from 'react-bootstrap';
 import '../styles/dashboard.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import host from '../config';
 
 
 const handleSelect = (eventKey) => alert(`selected ${eventKey}`);
@@ -18,7 +18,7 @@ async function addBoard(state, session){
   console.log(state.boardName, session);
   const config = {
     method: 'POST',
-    url: 'http://localhost:5000/createBoard/',
+    url: `${host}/createBoard/`,
     data: {
       name: state.boardName,
       session: session,
@@ -69,7 +69,7 @@ class BoardAdmin extends React.Component {
     const session = this.props.session;
     const config = {
       method: 'POST',
-      url: 'http://localhost:5000/getBoard/',
+      url: `${host}/getBoard/`,
       data: {
         session: session,
       },
@@ -83,7 +83,7 @@ class BoardAdmin extends React.Component {
   async delBoard(id){
     const config = {
       method: 'POST',
-      url: 'http://localhost:5000/deleteBoard/',
+      url: `${host}/deleteBoard/`,
       data: {
         id: id,
       },
@@ -101,15 +101,15 @@ class BoardAdmin extends React.Component {
             <NavDropdown.Item eventKey="LogOut" href="/Login">Log Out</NavDropdown.Item>
           </NavDropdown>
         </Nav>
-        <Button variant="secondary" className="add-button" onClick={this.showModal}>+</Button>
-        <Modal show={this.state.show} onHide={this.hideModal}>
+        <Button variant="dark" className="add-button" onClick={this.showModal}>+</Button>
+        <Modal centered show={this.state.show} onHide={this.hideModal}>
           <Modal.Header closeButton>
             <Modal.Title>Create Board</Modal.Title>
           </Modal.Header>
           <form onSubmit={this.handleSubmit}>
             <Modal.Body>
               <label>
-                Board Name:
+                <div className="input-label">Board Name:</div>
                 <input type="text"
                   name="boardName"
                   value={this.newBoardName}
@@ -119,7 +119,7 @@ class BoardAdmin extends React.Component {
               </label>
             </Modal.Body>
             <Modal.Footer>
-              <input type="submit" value="Submit" className="btn btn-primary"/>
+              <input type="submit" value="Submit" className="btn btn-light"/>
             </Modal.Footer>
           </form>
         </Modal>
@@ -130,7 +130,7 @@ class BoardAdmin extends React.Component {
                 <div>
                   <p>{element.name}</p>
                   <Button
-                    variant="secondary"
+                    variant="dark"
                     value={element._id}
                     onClick={this.setSelectedBoard.bind(this)}>
                     Open

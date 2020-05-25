@@ -8,13 +8,15 @@ import {
 } from 'react-bootstrap';
 import { Column } from '../components'
 import '../styles/board.scss';
+import host from '../config';
 
 const handleSelect = (eventKey) => alert(`selected ${eventKey}`);
+
 
 async function addColumn(name, boardId, session){
   const config = {
     method: 'POST',
-    url: 'http://localhost:5000/createColumn/',
+    url: `${host}/createColumn/`,
     data: {
       name: name,
       boardId: boardId,
@@ -22,10 +24,8 @@ async function addColumn(name, boardId, session){
     },
   };
   const creationState = await axios(config);
-  console.log(creationState.data);
   return creationState.data;
 }
-
 
 class Board extends React.Component {
   constructor(props){
@@ -62,23 +62,38 @@ class Board extends React.Component {
   };
   handleSubmit(e){
     e.preventDefault();
-    addColumn(this.state.columnName, this.BoardId, this.Session);
+    addColumn(this.state.columnName, this.BoardId, this.Session).then(()=>{
+      const config = {
+        method: 'POST',
+        url: `${host}/getColumns/`,
+        data: {
+          session: this.Session,
+          boardId: this.BoardId,
+        },
+      };
+      axios(config).then(res =>{
+        const newState = {
+          columns: res.data,
+          show: false,
+        }
+        this.setState(newState);
+      });
+    });
+  };
+  async updateTask(){
     const config = {
       method: 'POST',
-      url: 'http://localhost:5000/getColumns/',
+      url: `${host}/getColumns/`,
       data: {
         session: this.Session,
         boardId: this.BoardId,
       },
     };
-    axios(config).then(res =>{
-      const newState = {
-        columns: res.data,
-        show: false,
-      }
-      this.setState(newState);
+    axios(config).then(res=>{
+      this.setState({columns: res.data});
     });
-  };
+    window.location.reload();
+  }
   showModal(){
     this.setState({show:true});
   };
@@ -91,7 +106,7 @@ class Board extends React.Component {
   componentDidMount(){
     const config = {
       method: 'POST',
-      url: 'http://localhost:5000/getColumns/',
+      url: `${host}/getColumns/`,
       data: {
         session: this.Session,
         boardId: this.BoardId,
@@ -108,7 +123,7 @@ class Board extends React.Component {
   async delColumn(id, session, boardId){
     const config = {
       method: 'POST',
-      url: 'http://localhost:5000/deleteColumn/',
+      url: `${host}/deleteColumn/`,
       data: {
         session: session,
         boardId: boardId,
@@ -122,9 +137,9 @@ class Board extends React.Component {
   searchColumns(columns, tasks){
     if(!columns || columns.length === 0){
       return (
-        <p className="col-not-found">
+        <div className="col-not-found">
           There are no Columns
-        </p>
+        </div>
       );
     }
     const arr = columns.map((column) =>
@@ -135,6 +150,8 @@ class Board extends React.Component {
         session = {this.Session}
         board = {this.BoardId}
         delColumn = {this.delColumn.bind(this)}
+        availableColumns = {this.state.columns}
+        updateTask = {this.updateTask.bind(this)}
         tasks = {tasks.filter((task) => task.columnId === column.id)}/>
     )
     return arr;
@@ -153,15 +170,15 @@ class Board extends React.Component {
               <NavDropdown.Item eventKey="LogOut" href="/Login">Log Out</NavDropdown.Item>
             </NavDropdown>
           </Nav>
-          <Button variant="secondary" className="add-button" onClick={this.showModal}>+</Button>
-          <Modal show={this.state.show} onHide={this.hideModal}>
+          <Button variant="dark" className="add-button" onClick={this.showModal}>+</Button>
+          <Modal centered show={this.state.show} onHide={this.hideModal}>
             <Modal.Header closeButton>
               <Modal.Title>Create Column</Modal.Title>
             </Modal.Header>
             <form onSubmit={this.handleSubmit}>
               <Modal.Body>
                 <label>
-                  Column Name:
+                  <div className="input-label">Column Name:</div>
                   <input type="text"
                     name="columnName"
                     value={this.newColumnName}
@@ -171,7 +188,7 @@ class Board extends React.Component {
                 </label>
               </Modal.Body>
               <Modal.Footer>
-                <input type="submit" value="Submit" className="btn btn-primary"/>
+                <input type="submit" value="Submit" className="btn btn-light"/>
               </Modal.Footer>
             </form>
           </Modal>

@@ -1,38 +1,55 @@
+$mainColor: #000000;
+$objectColor: #434343;
+$backgroundColor: #262626;
+$borderColor: #262626;
+$secondaryColor: #0078ff;
+$textColor: white;
+
+
 .dashboard{
   height: 100vh;
-  background-color: #323232;
+  background-color: $backgroundColor;
   .top-bar{
-    background-color:#121212;
+    background-color:$mainColor;
     height: 8vh;
+    display: flex;
+    align-items: center;
+    .nav-item{
+      margin: 0 0 0 2vh;
+    }
     .dropdown-toggle{
-      padding-top: 2vh;
-      color:white;
+      padding: 0 0 0 0;
+      color:$textColor;
       &:hover{
-        color:white;
+        color:$textColor;
       }
     }
+    .dropdown{
+      padding-right: 2rem;
+    }
     .dropdown-menu{
-      background-color: #000000;
+      background-color: $backgroundColor;
       a{
-        color:white;
+        color:$textColor;
         &:hover{
-          background-color: #000000;
-          color:white;
+          background-color: $mainColor;
+          color:$textColor;
         }
       }
     }
   }
   .add-button{
+    position: absolute;
     margin-top: 10px;
     margin-left: 10px;
     display: flex;
   }
   .board-deck{
-    margin-top: 15px;
+    height: 92vh;
     overflow-x: scroll;
     white-space: nowrap;
     display: flex;
-    padding-bottom: 15px;
+    align-items: center;
     &::after {
       content: '';
       padding: 10px;
@@ -40,18 +57,60 @@
     .board{
       flex: 0 0 auto;
       margin-left: 20px;
-      background-color: white;
+      background-color: $objectColor;
       width: 25rem;
-      height: 15rem;
+      height: 70vh;
       border-radius: 15px;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: $textColor;
       .btn{
         margin-left: 2px;
         margin-right: 2px;
       }
 
+    }
+  }
+}
+
+.modal-content{
+  background-color: $objectColor;
+  border-radius: 15px;
+  .modal-header{
+    color: $textColor;
+    border-bottom: 1px solid $borderColor;
+    .close{
+      color:$textColor;
+    }
+  }
+  .modal-body{
+    label{
+      width: 100%;
+      display: flex;
+      .input-label{
+        width: 30%;
+      }
+      input{
+        padding-left: 15px;
+        width: 70%;
+        border: none;
+        border-radius: 5000px;
+        background-color: $backgroundColor;
+        color: $textColor;
+      }
+    }
+  }
+  .modal-footer{
+    padding: 0 0 0 0;
+    border:none;
+    .btn{
+      margin: 0 0 0 0;
+      width: 100%;
+      border-end-end-radius: 15px;
+      border-end-start-radius: 15px;
+      padding-top: 15px;
+      padding-bottom: 15px;
     }
   }
 }
