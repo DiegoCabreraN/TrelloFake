@@ -12,10 +12,10 @@ import host from '../config';
 
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 
-const handleSelect = (eventKey) => alert(`selected ${eventKey}`);
+const close = (session) => alert(`Closing Session ${session}`);
 
 
-async function addColumn(name, boardId, session) {
+async function createColumn(name, boardId, session) {
   const config = {
     method: 'POST',
     url: `${host}/create/column/`,
@@ -37,17 +37,17 @@ class Board extends React.Component {
     if (history.location.state) {
       this.state = {
         show: false,
-        columns: [],
+        columnList: [],
       };
-      this.columns = [];
-      this.tasks = [];
+      this.columnList = [];
+      this.taskList = [];
       this.BoardId = match.params.BoardId;
       this.Session = match.params.session;
       this.showModal = this.showModal.bind(this);
       this.hideModal = this.hideModal.bind(this);
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
-      this.delColumn = this.delColumn.bind(this);
+      this.removeColumn = this.removeColumn.bind(this);
       this.updateTask = this.updateTask.bind(this);
       this.returnToAdmin = this.returnToAdmin.bind(this);
     }
@@ -63,14 +63,14 @@ class Board extends React.Component {
       },
     };
     axios(config).then((res) => {
-      this.setState({ columns: res.data });
+      this.setState({ columnList: res.data });
     });
   }
 
   handleSubmit(e) {
     e.preventDefault();
     const { columnName } = this.state;
-    addColumn(columnName, this.BoardId, this.Session).then(() => {
+    createColumn(columnName, this.BoardId, this.Session).then(() => {
       const config = {
         method: 'POST',
         url: `${host}/get/column/`,
@@ -81,7 +81,7 @@ class Board extends React.Component {
       };
       axios(config).then((res) => {
         const newState = {
-          columns: res.data,
+          columnList: res.data,
           show: false,
         };
         this.setState(newState);
@@ -99,7 +99,7 @@ class Board extends React.Component {
       },
     };
     axios(config).then((res) => {
-      this.setState({ columns: res.data });
+      this.setState({ columnList: res.data });
     });
     window.location.reload();
   }
@@ -121,7 +121,7 @@ class Board extends React.Component {
     history.push(`/Dashboard/${match.params.session}`);
   }
 
-  async delColumn(id, session, boardId) {
+  async removeColumn(id, session, boardId) {
     const config = {
       method: 'POST',
       url: `${host}/delete/column/`,
@@ -132,7 +132,7 @@ class Board extends React.Component {
       },
     };
     const deleteState = await axios(config);
-    this.setState({ columns: deleteState.data });
+    this.setState({ columnList: deleteState.data });
     return deleteState.data;
   }
 
@@ -145,7 +145,7 @@ class Board extends React.Component {
       );
     }
     const arr = columnsFound.map((column) => {
-      const { columns } = this.state;
+      const { columnList } = this.state;
       return (
         <Column
           key={column._id}
@@ -153,8 +153,8 @@ class Board extends React.Component {
           id={column._id}
           session={this.Session}
           board={this.BoardId}
-          delColumn={this.delColumn}
-          availableColumns={columns}
+          delColumn={this.removeColumn}
+          availableColumns={columnList}
           updateTask={this.updateTask}
           tasks={tasks.filter((task) => task.columnId === column.id)}
         />
@@ -165,11 +165,11 @@ class Board extends React.Component {
 
   render() {
     const { history } = this.props;
-    const { show, columns } = this.state;
+    const { show, columnList } = this.state;
     if (history.location.state) {
       return (
         <div className="board">
-          <Nav className="justify-content-end top-bar" onSelect={handleSelect}>
+          <Nav className="justify-content-end top-bar" onSelect={() => close(this.Session)}>
             <Nav.Item className="return-button">
               <Button onClick={this.returnToAdmin}>{'<'}</Button>
             </Nav.Item>
@@ -207,7 +207,7 @@ class Board extends React.Component {
           </Modal>
           <div className="column-deck">
             {
-              this.searchColumns(columns, this.tasks)
+              this.searchColumns(columnList, this.taskList)
             }
           </div>
         </div>

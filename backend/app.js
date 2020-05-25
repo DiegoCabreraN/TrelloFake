@@ -24,7 +24,7 @@ app.post('/create/:type', async (req, res) => {
   if (req.params.type === 'user') {
     const query = await connections.User.find(
       {
-        username: req.body.username,
+        mail: req.body.mail,
       },
     );
     if (query.length === 0) {

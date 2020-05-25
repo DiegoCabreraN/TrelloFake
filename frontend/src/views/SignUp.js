@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button, Card } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/forms.scss';
 import axios from 'axios';
 import host from '../config';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/forms.scss';
 
 async function sendData(params) {
   const config = {
@@ -19,7 +19,7 @@ class SignUp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
+      mail: '',
       password: '',
       fName: '',
       lName: '',
@@ -43,7 +43,7 @@ class SignUp extends React.Component {
 
   render() {
     const {
-      username,
+      mail,
       password,
       fName,
       lName,
@@ -55,13 +55,13 @@ class SignUp extends React.Component {
           <Card.Body>
             <Card.Title>SignUp</Card.Title>
             <form onSubmit={this.handleSubmit}>
-              <label htmlFor="username">
-                Username:
+              <label htmlFor="mail">
+                Mail:
                 <input
-                  id="username"
+                  id="mail"
                   type="text"
-                  name="username"
-                  value={username}
+                  name="mail"
+                  value={mail}
                   onChange={this.handleChange}
                   className="textBox"
                 />

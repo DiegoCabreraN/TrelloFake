@@ -26,7 +26,7 @@ class Column extends React.Component {
     this.hideModal = this.hideModal.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.delTask = this.delTask.bind(this);
+    this.removeTask = this.removeTask.bind(this);
   }
 
   componentDidMount() {
@@ -108,7 +108,7 @@ class Column extends React.Component {
     const arr = tasks.map((task) => (
       <Task
         key={task._id}
-        delTask={this.delTask}
+        removeTask={this.removeTask}
         board={board}
         columnId={id}
         availableColumns={availableColumns}
@@ -119,7 +119,7 @@ class Column extends React.Component {
     return arr;
   }
 
-  async delTask(id, columnId, board) {
+  async removeTask(id, columnId, board) {
     const config = {
       method: 'POST',
       url: `${host}/delete/task/`,

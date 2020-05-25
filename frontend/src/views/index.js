@@ -1,3 +1,3 @@
-import App from './App';
+import Session from './App';
 
-export default App;
+export default Session;

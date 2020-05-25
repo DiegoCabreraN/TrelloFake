@@ -10,7 +10,7 @@ import SignUp from './SignUp';
 import Board from './Board';
 import '../styles/App.css';
 
-function App() {
+function Session() {
   return (
     <Router>
       <div className="App">
@@ -25,4 +25,4 @@ function App() {
   );
 }
 
-export default App;
+export default Session;

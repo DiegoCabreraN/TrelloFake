@@ -14,20 +14,8 @@ import host from '../config';
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 /* eslint react/forbid-prop-types: 0 */
 
-const handleSelect = (eventKey) => alert(`selected ${eventKey}`);
+const close = (session) => alert(`Closing Session ${session}`);
 
-async function addBoard(state, session) {
-  const config = {
-    method: 'POST',
-    url: `${host}/create/board/`,
-    data: {
-      name: state.boardName,
-      session,
-    },
-  };
-  const creationState = await axios(config);
-  return creationState.data;
-}
 
 class BoardAdmin extends React.Component {
   constructor(props) {
@@ -35,7 +23,7 @@ class BoardAdmin extends React.Component {
     this.state = {
       boardName: '',
       show: false,
-      boards: [],
+      boardList: [],
     };
     const { match } = this.props;
     this.session = match.params.Session;
@@ -43,7 +31,8 @@ class BoardAdmin extends React.Component {
     this.hideModal = this.hideModal.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.setSelectedBoard = this.setSelectedBoard.bind(this);
+    this.openBoard = this.openBoard.bind(this);
+    this.createBoard = this.createBoard.bind(this);
   }
 
   componentDidMount() {
@@ -55,14 +44,14 @@ class BoardAdmin extends React.Component {
       },
     };
     axios(config).then((res) => {
-      this.setState({ boards: res.data });
+      this.setState({ boardList: res.data });
     });
   }
 
-  setSelectedBoard(e) {
-    const { boards } = this.state;
+  openBoard(e) {
+    const { boardList } = this.state;
     const { history } = this.props;
-    const board = boards.find((item) => item.id === parseInt(e.target.value, 10));
+    const board = boardList.find((item) => item.id === parseInt(e.target.value, 10));
     history.push({
       pathname: `/Boards/${this.session}/${e.target.value}`,
       state: {
@@ -73,9 +62,10 @@ class BoardAdmin extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    addBoard(this.state, this.session);
-    this.setState({ show: false });
-    this.componentDidMount();
+    this.createBoard().then(() => {
+      this.setState({ show: false });
+      this.componentDidMount();
+    });
   }
 
   showModal() {
@@ -90,7 +80,7 @@ class BoardAdmin extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  async delBoard(id) {
+  async removeBoard(id) {
     const config = {
       method: 'POST',
       url: `${host}/delete/board`,
@@ -103,29 +93,43 @@ class BoardAdmin extends React.Component {
     return deleteState.data;
   }
 
+  async createBoard() {
+    const { boardName } = this.state;
+    const config = {
+      method: 'POST',
+      url: `${host}/create/board/`,
+      data: {
+        name: boardName,
+        session: this.session,
+      },
+    };
+    const creationState = await axios(config);
+    return creationState.data;
+  }
+
   searchBoards() {
-    const { boards } = this.state;
-    if (!boards || boards.length === 0) {
+    const { boardList } = this.state;
+    if (!boardList || boardList.length === 0) {
       return (
         <div className="board-not-found">
           There are no Boards
         </div>
       );
     }
-    const arr = boards.map((element) => (
+    const arr = boardList.map((element) => (
       <div className="board" key={element._id}>
         <div>
           <p>{element.name}</p>
           <Button
             variant="dark"
             value={element._id}
-            onClick={this.setSelectedBoard}
+            onClick={this.openBoard}
           >
             Open
           </Button>
           <Button
             variant="danger"
-            onClick={() => this.delBoard(element._id)}
+            onClick={() => this.removeBoard(element._id)}
           >
             🗑
           </Button>
@@ -139,7 +143,7 @@ class BoardAdmin extends React.Component {
     const { show } = this.state;
     return (
       <div className="dashboard">
-        <Nav className="justify-content-end top-bar" onSelect={handleSelect}>
+        <Nav className="justify-content-end top-bar" onSelect={() => close(this.session)}>
           <NavDropdown title="Options" id="nav-dropdown">
             <NavDropdown.Item eventKey="LogOut" href="/Login">Log Out</NavDropdown.Item>
           </NavDropdown>

@@ -1,9 +1,10 @@
 import React from 'react';
 import { Button, Card } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/forms.scss';
 import axios from 'axios';
 import host from '../config';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/forms.scss';
+
 
 async function getData(params) {
   const config = {
@@ -15,12 +16,11 @@ async function getData(params) {
   return creationState.data;
 }
 
-
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
+      mail: '',
       password: '',
     };
     this.handleChange = this.handleChange.bind(this);
@@ -40,20 +40,20 @@ class Login extends React.Component {
   }
 
   render() {
-    const { username, password } = this.state;
+    const { mail, password } = this.state;
     return (
       <div className="forceCentered">
         <Card bg="dark" text="white" style={{ width: '18rem' }}>
           <Card.Body>
             <Card.Title>Login</Card.Title>
             <form onSubmit={this.handleSubmit}>
-              <label htmlFor="username">
-                Username:
+              <label htmlFor="mail">
+                Mail:
                 <input
-                  id="username"
+                  id="mail"
                   type="text"
-                  name="username"
-                  value={username}
+                  name="mail"
+                  value={mail}
                   onChange={this.handleChange}
                   className="textBox"
                 />

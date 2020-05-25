@@ -17,7 +17,7 @@ class Task extends React.Component {
     const { tasks, availableColumns } = this.props;
     this.state = {
       show: false,
-      taskDescription: tasks.description,
+      Description: tasks.description,
       actualColumnId: tasks.columnId,
       actualColumn: availableColumns.find((item) => item._id === tasks.columnId).name,
     };
@@ -31,14 +31,14 @@ class Task extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     const { tasks, updateTask } = this.props;
-    const { actualColumnId, taskDescription } = this.state;
+    const { actualColumnId, Description } = this.state;
     const config = {
       method: 'POST',
       url: `${host}/updateTask/`,
       data: {
         id: tasks._id,
         columnId: actualColumnId,
-        newDescription: taskDescription,
+        newDescription: Description,
       },
     };
     axios(config).then((res) => {
@@ -61,7 +61,7 @@ class Task extends React.Component {
   }
 
   handleChange(e) {
-    this.setState({ taskDescription: e.target.value });
+    this.setState({ Description: e.target.value });
   }
 
   render() {
@@ -70,9 +70,9 @@ class Task extends React.Component {
       availableColumns,
       columnId,
       board,
-      delTask,
+      removeTask,
     } = this.props;
-    const { show, taskDescription, actualColumn } = this.state;
+    const { show, Description, actualColumn } = this.state;
     return (
       <div key={tasks._id} className="task">
         <Button variant="dark" className="task-description" onClick={this.showModal}>{tasks.description}</Button>
@@ -87,8 +87,8 @@ class Task extends React.Component {
                 <input
                   id="description"
                   type="text"
-                  name="taskDescription"
-                  value={taskDescription}
+                  name="Description"
+                  value={Description}
                   onChange={this.handleChange}
                   className="textBox"
                 />
@@ -131,7 +131,7 @@ class Task extends React.Component {
           <Button
             variant="danger"
             className="close-btn"
-            onClick={() => delTask(tasks._id, columnId, board)}
+            onClick={() => removeTask(tasks._id, columnId, board)}
           >
             ⨯
           </Button>

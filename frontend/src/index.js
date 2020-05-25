@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './styles/index.css';
-import App from './views';
+import Session from './views';
 
 ReactDOM.render(
-  <App />,
+  <Session />,
   document.getElementById('root'),
 );
