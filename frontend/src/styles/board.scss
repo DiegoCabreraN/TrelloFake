@@ -1,0 +1,247 @@
+$mainColor: #000000;
+$objectColor: #434343;
+$backgroundColor: #262626;
+$borderColor: #262626;
+$secondaryColor: #0078ff;
+$textColor: white;
+
+.board{
+  height: 100vh;
+  width: 100vw;
+  background-color: $backgroundColor;
+  .col-not-found{
+    color: darken($textColor, 40%);
+    font-size: 20px;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .top-bar{
+    background-color:$mainColor;
+    height: 8vh;
+    display: flex;
+    align-items: center;
+    .nav-item{
+      margin: 0 0 0 2vh;
+    }
+    .dropdown-toggle{
+      padding: 0 0 0 0;
+      color:$textColor;
+      &:hover{
+        color:$textColor;
+      }
+    }
+    .dropdown{
+      padding-right: 2rem;
+    }
+    .dropdown-menu{
+      background-color: $backgroundColor;
+      a{
+        color:$textColor;
+        &:hover{
+          background-color: $mainColor;
+          color:$textColor;
+        }
+      }
+    }
+  }
+  .add-button{
+    float: right;
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+  .return-button{
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 10px;
+    left: 0;
+    .btn{
+      background-color: #323232;
+      border: #323232;
+    }
+  }
+  .column-deck{
+    height: 92vh;
+    overflow-x: scroll;
+    white-space: nowrap;
+    display: flex;
+    &::after {
+      content: '';
+      padding: 10px;
+    }
+    .column-container{
+      margin-top: 6vh;
+      flex: 0 0 auto;
+      margin-left: 20px;
+      background-color: $objectColor;
+      width: 20.5rem;
+      height: 77vh;
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      .column{
+        padding-top: 15px;
+        height: 77vh;
+        overflow: auto;
+        .title{
+          height: 8vh;
+          display: flex;
+          align-items: center;
+          p{
+            font-size: 2vh;
+            display: flex;
+            align-items: center;
+            width: 90%;
+            height: 3rem;
+            text-align: left;
+            padding-left: 2rem;
+            margin-bottom: 0;
+            color: $textColor;
+          }
+          .btn{
+            margin-right: 1rem;
+            border-radius: 100%;
+            width: 3rem;
+            height: 3rem;
+          }
+          padding-bottom: 1rem;
+          border-bottom: 1px solid $borderColor;
+        }
+        .tasks{
+          height: 57vh;
+          width: 20.5rem;
+          overflow: auto;
+          .task{
+            border-bottom: 1px solid $borderColor;
+            text-align: left;
+            display: flex;
+            width: 100%;
+            padding: 2vh 2vh 2vh 2vh;
+            .task-description{
+              max-width: 80%;
+              width: 80%;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              text-align: left;
+            }
+            .buttonContainer{
+              width: 20%;
+              display: flex;
+              float: right;
+              justify-content: end;
+              .close-btn{
+                border: none;
+              }
+            }
+          }
+          .task-not-found{
+            color: $borderColor;
+            font-size: 1.2rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4vh 2vh 4vh 2vh;
+          }
+        }
+        .footer{
+          border-top: 1px solid $borderColor;
+          height: 10vh;
+          .new-task-btn{
+            margin: 15px 2px 2px 2px;
+            border-radius: 100%;
+            font-size: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: $secondaryColor;
+          }
+        }
+      }
+    }
+  }
+}
+.error-screen{
+  background-color: black;
+  height: 100vh;
+  width: 100vw;
+  color: darken($textColor, 40%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+.modal-content{
+  background-color: $objectColor;
+  border-radius: 15px;
+  .modal-header{
+    color: $textColor;
+    border-bottom: 1px solid $borderColor;
+    .close{
+      color:$textColor;
+    }
+  }
+  .modal-body{
+    color: $textColor;
+    label{
+      width: 100%;
+      display: flex;
+      .input-label{
+        width: 30%;
+        display: flex;
+        justify-content: left;
+        align-items: center;
+      }
+      input{
+        width: 70%;
+        border: none;
+        border-radius: 5000px;
+        background-color: $backgroundColor;
+        color: $textColor;
+      }
+      .column-dropdown{
+        width: 70%;
+        .dropdown-toggle{
+          border-radius: 5000px;
+        }
+        .dropdown-menu{
+          width: 100%;
+          border-end-end-radius: 30px;
+          border-end-start-radius: 30px;
+          background-color: $backgroundColor;
+          padding-top: 0;
+          padding-bottom: 0;
+          .dropdown-item{
+            color: $textColor;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            display: flex;
+            align-items:center;
+            &:hover{
+              background-color: $mainColor;
+            }
+            &:last-of-type{
+              border-end-end-radius: 30px;
+              border-end-start-radius: 30px;
+              padding-bottom: 15px;
+            }
+          }
+        }
+      }
+    }
+  }
+  .modal-footer{
+    padding: 0 0 0 0;
+    border:none;
+    .btn{
+      margin: 0 0 0 0;
+      width: 100%;
+      border-end-end-radius: 15px;
+      border-end-start-radius: 15px;
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
+  }
+}
