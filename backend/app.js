@@ -76,11 +76,12 @@ app.post('/createBoard/', async (req,res)=>{
 
 app.post('/getBoard/', async (req,res)=>{
   const query = await Board.find({ "sessions": [req.body.session]});
-  console.log(query);
   res.status(200).send(query);
 });
 
 app.post('/deleteBoard/', async (req,res)=>{
+  await Task.deleteMany({boardId: req.body.id});
+  await Column.deleteMany({boardId: req.body.id});
   Board.deleteOne({_id: req.body.id},(err) => {
     if (err) {
       return next(err);
@@ -106,13 +107,13 @@ app.post('/createColumn/', async (req,res)=>{
 });
 
 app.post('/deleteColumn/', async (req,res)=>{
+  await Task.deleteMany({columnId: req.body.id});
   Column.deleteOne({_id: req.body.id},(err) => {
     if (err) {
       return next(err);
     }
   }).then(async ()=>{
     const query = await Column.find({ "sessions": [req.body.session], "boardId": req.body.boardId});
-    console.log(query);
     res.status(200).send(query);
   });
 });
@@ -124,7 +125,6 @@ app.post('/getTasks/', async (req,res)=>{
 
 app.post('/createTask/', async (req,res)=>{
   const query = await Column.findOne({"name":req.body.colName,"sessions":[req.body.session], "boardId": req.body.boardId});
-  console.log(req.body, query);
   const columnId = query._id;
   const taskDocument = {
     description: req.body.description,
@@ -137,7 +137,6 @@ app.post('/createTask/', async (req,res)=>{
 });
 
 app.post('/deleteTask/', async (req,res)=>{
-  console.log(req.body);
   Task.deleteOne({_id: req.body.id},(err) => {
     if (err) {
       return next(err);
@@ -153,7 +152,6 @@ app.post('/updateTask/', async (req,res)=>{
   const currentTask = await Task.findOne({ "_id": req.body.id});
   currentTask.description = req.body.newDescription;
   currentTask.columnId = req.body.columnId;
-  console.log(currentTask);
   const currentTaskDoc = Task(currentTask);
   currentTaskDoc.save().then((data)=>{
     res.status(200).send(data._id);

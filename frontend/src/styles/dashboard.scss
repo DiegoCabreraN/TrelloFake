@@ -41,7 +41,8 @@ $textColor: white;
   .add-button{
     position: absolute;
     margin-top: 10px;
-    margin-left: 10px;
+    margin-right: 10px;
+    right: 0;
     display: flex;
   }
   .board-deck{
@@ -70,6 +71,12 @@ $textColor: white;
         margin-right: 2px;
       }
 
+    }
+    .board-not-found{
+      color: darken($textColor, 40%);
+      width: 100%;
+      font-size: 3vh;
+      text-align: center;
     }
   }
 }

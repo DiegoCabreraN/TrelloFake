@@ -92,6 +92,34 @@ class BoardAdmin extends React.Component {
     this.componentDidMount();
     return deleteState.data;
   }
+  searchBoards(){
+    if(!this.state.boards || this.state.boards.length === 0){
+      return (
+        <div className="board-not-found">
+          There are no Boards
+        </div>
+      );
+    }
+    const arr = this.state.boards.map((element) =>
+      <div className="board" key={element._id}>
+        <div>
+          <p>{element.name}</p>
+          <Button
+            variant="dark"
+            value={element._id}
+            onClick={this.setSelectedBoard.bind(this)}>
+            Open
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => this.delBoard(element._id)}>
+            🗑
+          </Button>
+        </div>
+      </div>
+    );
+    return arr;
+  };
 
   render(){
     return (
@@ -125,24 +153,7 @@ class BoardAdmin extends React.Component {
         </Modal>
         <div className="board-deck">
           {
-            this.state.boards.map((element) =>
-              <div className="board" key={element._id}>
-                <div>
-                  <p>{element.name}</p>
-                  <Button
-                    variant="dark"
-                    value={element._id}
-                    onClick={this.setSelectedBoard.bind(this)}>
-                    Open
-                  </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => this.delBoard(element._id)}>
-                    🗑
-                  </Button>
-                </div>
-              </div>
-            )
+            this.searchBoards()
           }
         </div>
       </div>
