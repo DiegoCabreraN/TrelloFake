@@ -79,7 +79,7 @@ app.post('/get/:type', async (req, res) => {
       },
     );
     if (query.length !== 0
-        && query[0].username === req.body.username
+        && query[0].mail === req.body.mail
         && query[0].password === req.body.password
     ) {
       res.status(200).send(query[0]._id);
